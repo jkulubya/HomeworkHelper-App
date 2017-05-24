@@ -1,9 +1,8 @@
 import Expo from 'expo';
 import React from 'react';
 import axios from 'axios';
-import { Text } from 'react-native';
 import ActionButton from 'react-native-action-button';
-import { Container, Header, Title, Content, Button, Left, Body, Icon } from 'native-base';
+import { Card, CardItem, Container, Title, Content, Button, Body, Text, Spinner } from 'native-base';
 
 export default class QuestionDetails extends React.Component {
     constructor(props){
@@ -14,6 +13,7 @@ export default class QuestionDetails extends React.Component {
             dataLoaded: false
         };
         this.handleFabClick = this.handleFabClick.bind(this);
+        this.handlePostAnswer = this.handlePostAnswer.bind(this);
     }
 
     render() {
@@ -21,7 +21,7 @@ export default class QuestionDetails extends React.Component {
             return (
                 <Container>
                     <Content>
-                        <Text>Loading</Text>
+                        <Spinner />
                     </Content>
                     <ActionButton buttonColor="rgba(231,76,60,1)" onPress={() => this.handleFabClick()} />
                 </Container>        
@@ -31,10 +31,28 @@ export default class QuestionDetails extends React.Component {
         return (
             <Container>
                 <Content>
-                <Text>{this.state.title}</Text>
-                <Text>{this.state.author}</Text>
-                <Text>{this.state.text}</Text>
-                <Text>{this.state.title}</Text>
+                    <Card>
+                        <CardItem>
+                            <Body>
+                                <Text style={styles.questionTitle}>{this.state.title}</Text>
+                            </Body>
+                        </CardItem>
+                        <CardItem>
+                            <Body>
+                                <Text note>{this.state.author}</Text>
+                            </Body>
+                        </CardItem>
+                        <CardItem>
+                            <Body>
+                                <Text>
+                                    <Text>{this.state.text}</Text>
+                                </Text>
+                            </Body>
+                        </CardItem>
+                    </Card>
+                    <Button block onPress={() => this.handlePostAnswer()}>
+                        <Text>Answer Question</Text>
+                    </Button>
                 </Content>
                 <ActionButton buttonColor="rgba(231,76,60,1)" onPress={() => this.handleFabClick()} />
             </Container>
@@ -42,7 +60,7 @@ export default class QuestionDetails extends React.Component {
     }
 
     componentDidMount(){
-        let url = "http://192.168.1.102:5000/api/questions/"+ this.state.id;
+        let url = "http://hh.jkulubya.com/api/questions/"+ this.state.id;
         axios.get(url)
             .then(response => {
                 this.setState({
@@ -60,5 +78,15 @@ export default class QuestionDetails extends React.Component {
 
     handleFabClick(){
         this.props.navigation.navigate('NewQuestion');
+    }
+
+    handlePostAnswer(){
+        this.props.navigation.navigate('NewAnswer', {id : this.state.id});
+    }
+}
+
+const styles = {
+    questionTitle: {
+        fontSize: 25,
     }
 }

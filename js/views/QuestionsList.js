@@ -1,8 +1,8 @@
 import Expo from 'expo';
 import React from 'react';
 import axios from 'axios';
-import { StatusBar, Text } from 'react-native';
-import { Container, Header, Title, Content, Button, Left, Right, Body, Icon,List } from 'native-base';
+import { StatusBar, Text, RefreshControl } from 'react-native';
+import { Container, Header, Title, Content, Button, Left, Right, Body, Icon,List, Spinner } from 'native-base';
 import ActionButton from 'react-native-action-button';
 
 import QuestionRow from '../components/QuestionRow';
@@ -12,10 +12,12 @@ export default class QuestionsList extends React.Component {
         super(props);
         this.state = {
             dataLoaded: false,
-            questions: []
+            questions: [],
+            isRefreshing: false
         };
         this.handleRowClick = this.handleRowClick.bind(this);
         this.handleFabClick = this.handleFabClick.bind(this);
+        this._onRefresh = this._onRefresh.bind(this);
         
     }
 
@@ -34,7 +36,7 @@ export default class QuestionsList extends React.Component {
                 <Container>
                     <Content>
                         <List>
-                            <Text>Loading</Text>
+                            <Spinner />
                         </List>
                     </Content>
                     <ActionButton buttonColor="rgba(231,76,60,1)" onPress={() => this.handleFabClick()} />
@@ -55,23 +57,45 @@ export default class QuestionsList extends React.Component {
 
         return (
             <Container>
-                <Content>
-                    <List>
+                <Content refreshControl=
+                            {<RefreshControl 
+                                refreshing={this.state.isRefreshing}
+                                onRefresh={this._onRefresh}
+                                tintColor="#ff0000"
+                                title="Loading..."
+                                titleColor="#00ff00"
+                                colors={['#ff0000']}
+                                progressBackgroundColor="#ffffff"
+                            />}>
+                    <List>                         
                         {questionList}
-                    </List>
+                    </List>                  
                 </Content>
                 <ActionButton buttonColor="rgba(231,76,60,1)" onPress={() => this.handleFabClick()} />
             </Container>        
         );
     }
 
-    componentDidMount(){
-        axios.get("http://192.168.1.102:5000/api/questions")
+    _onRefresh(){
+        this.setState({isRefreshing: true});
+        axios.get("http://hh.jkulubya.com/api/questions")
              .then(response => {
                  this.setState({dataLoaded: true, questions: response.data});
              })
              .catch(error => {
-                 console.log('error1');
+                 console.log(error);
+             });
+        this.setState({isRefreshing: false});
+    }
+
+
+
+    componentDidMount(){
+        axios.get("http://hh.jkulubya.com/api/questions")
+             .then(response => {
+                 this.setState({dataLoaded: true, questions: response.data});
+             })
+             .catch(error => {
                  console.log(error);
              });
     }

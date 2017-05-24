@@ -26,15 +26,17 @@ export default class NewQuestion extends React.Component {
                             autoCapitalize = 'none'
                             onChangeText = {(text) => this.setState({question: {...this.state.question, title: text}})}
                         />
-                    </Item>                    
-                    <Input
-                        style={styles.bodyInput}
-                        placeholder = 'Question body goes here'
-                        multiline={true}
-                        blurOnSubmit={false}
-                        numberOfLines={5}
-                        onChangeText = {(text) => this.setState({question: {...this.state.question, text: text}})}
-                    />
+                    </Item> 
+                    <Item underline>
+                        <Input
+                            style={styles.bodyInput}
+                            placeholder = 'Question body goes here'
+                            multiline={true}
+                            blurOnSubmit={false}
+                            numberOfLines={5}
+                            onChangeText = {(text) => this.setState({question: {...this.state.question, text: text}})}
+                        />
+                    </Item>
                     <Button style={styles.submit} block onPress={()=>this.submitQuestion()}>
                         <Text style={styles.submitText}>Submit Question</Text>
                     </Button>
@@ -49,7 +51,7 @@ export default class NewQuestion extends React.Component {
             ...this.state.question,
             authorId: "06a636fc-f7d0-4bd6-abe7-65da895fb1b9"
         };
-        axios.post("http://192.168.1.102:5000/api/questions", q)
+        axios.post("http://hh.jkulubya.com/api/questions", q)
             .then(response => {
                 console.log("successfully posted question");
             })
