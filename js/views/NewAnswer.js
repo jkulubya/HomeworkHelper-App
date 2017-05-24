@@ -50,6 +50,7 @@ export default class NewAnswer extends React.Component {
                             blurOnSubmit={false}
                             numberOfLines={5}
                             onChangeText = {(text) => this.setState({answer: {...this.state.answer, Text: text}})}
+                            value = {this.state.answer.Text}
                         />
                     </Item>
                     <Button style={styles.submit} block onPress={()=>this.submitAnswer()}>
@@ -75,11 +76,11 @@ export default class NewAnswer extends React.Component {
         axios.post(url, a)
             .then(response => {
                 console.log("successfully posted answer");
-                this.setState({requestStatus: "idle", error: false});
+                this.setState({ requestStatus: "idle", answer: {...this.state.answer, Text: ""}});
             })
             .catch(error => {
                 console.log("error posting new answer");
-                this.requestStatus({requestStatus: "idle", error: true});
+                this.setState({requestStatus: "idle", error: true});
             });
     }
 }
